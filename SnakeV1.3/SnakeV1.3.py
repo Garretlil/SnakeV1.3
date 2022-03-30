@@ -1,6 +1,13 @@
 
 from tkinter import*
 import random
+from enum import Enum
+
+class Directions(Enum):
+    Up = 1
+    Down = 2
+    Left = 3
+    Right = 4
 
 class Options:
      def __init__(self):
@@ -14,6 +21,7 @@ class Options:
         self.colorzmeika=0
         self.colorgoal=0
         self.titleform=0
+        self.currentdirection=0
 
 class Snake:
      def __init__(self,options_):
@@ -26,13 +34,19 @@ class Snake:
         self.zmeika.PaintSnake()
         self.goal=Goal( self.options.dimesionSetka,self.paint_)
         self.goal.PaintGoal()
-        self.paint_.Key("<d>",self.KeyS) 
+        self.paint_.Key("<s>",self.KeyS) 
+        self.paint_.Key("<Right>",self.KeyRight) 
         self.paint_.PaintForm()
          
      def KeyS(self,event):
         self.goal.GetRandomPoint()
         self.goal.PaintGoal()     
         self.setka.PaintCell(self.goal.oldpoint)   
+
+     def KeyRight(self,event):
+        self.zmeika.MoveNext(self.options.currentdirection)
+        self.zmeika.PaintSnake()
+   
  
 
 class Point:
@@ -145,8 +159,11 @@ class Zmeika:
         self.CellsZmeika.append(Point(1,0))
         self.CellsZmeika.append(Point(2,0))
 
-      def SetPoinsForSnake(self):
-          p=5
+      def MoveNext(self,direction):
+        self.CellsZmeika.append(Point(1,0))
+        self.CellsZmeika.append(Point(2,0))
+        self.CellsZmeika.append(Point(3,0))
+
       def PaintSnake(self):
            for point_ in self.CellsZmeika:
                self.paint.PaintRectange(self.paint.GetRect(point_).X0,
@@ -155,14 +172,15 @@ class Zmeika:
                                     self.paint.GetRect(point_).Y1,self.Color)
 
 options=Options()
-options.dimesionSetka=50
-options.size=300
+options.dimesionSetka=20
+options.size=450
 options.colorsetka="Gray"
 options.colorzmeika="Red"
 options.dimesionZmeika=5
 options.witdthform=600
 options.heightform=600
 options.titleform="TestSnake"
+options.currentdirection=Directions.Right
 snake=Snake(options)
  
  

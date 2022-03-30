@@ -2,38 +2,38 @@
 from tkinter import*
 import random
 
+class Options:
+     def __init__(self):
+        self.dimesionSetka=0
+        self.dimesionZmeika=0
+        self.size=0
+        self.sizeCell=0
+        self.witdthform=0
+        self.heightform=0
+        self.colorsetka=0
+        self.colorzmeika=0
+        self.colorgoal=0
+        self.titleform=0
+
 class Snake:
-     def __init__(self,dimesionSetka_,size_,color_):
-        self.dimesionSetka=dimesionSetka_
-        self.size=size_
-        self.color=color_
-        self.sizeCell=self.size//self.dimesionSetka
-        self.paint_=Paint(self.sizeCell,800,1000)
+     def __init__(self,options_):
+        self.options=options_  
+        self.options.sizeCell=options_.size//options_.dimesionSetka
+        self.paint_=Paint(self.options)
+        self.setka=Setka(self.paint_,self.options)
+        self.setka.PaintSetka()             
+        self.zmeika=Zmeika( self.paint_,self.options)
+        self.zmeika.PaintSnake()
+        self.goal=Goal( self.options.dimesionSetka,self.paint_)
+        self.goal.PaintGoal()
+        self.paint_.Key("<d>",self.KeyS) 
+        self.paint_.PaintForm()
          
      def KeyS(self,event):
         self.goal.GetRandomPoint()
         self.goal.PaintGoal()     
-        self.setka.PaintCell(self.goal.oldpoint)
-               
-     def Go(self):
-
-        self.windows=self.paint_.PaintForm()
-        self.setka=Setka(self.dimesionSetka,self.size,self.paint_,self.color,self.sizeCell)
-        self.setka.PaintSetka()
-       
-        
-        self.zmeika=Zmeika( self.paint_)
-        self.zmeika.CellsSnake.append(Point(0,0))
-        self.zmeika.CellsSnake.append(Point(1,0))
-        self.zmeika.CellsSnake.append(Point(2,0))
-        self.goal=Goal( self.dimesionSetka,self.paint_)
-        self.zmeika.PaintSnake()
-        self.goal.PaintGoal()
-        self.windows.bind("<s>", self.KeyS) 
-        self.windows.title('Snake')
-        self.paint_.canvas.pack()
-        self.windows.update()
-        self.windows.mainloop()
+        self.setka.PaintCell(self.goal.oldpoint)   
+ 
 
 class Point:
      def __init__(self,Column_,Row_):
@@ -48,24 +48,27 @@ class Rect:
          self.Y1=0
 
 class Paint:
-    def __init__(self,sizecell_,window_width_,window_length_):        
-        self.sizeCell=sizecell_
-        self.window_width = window_width_
-        self.window_length = window_length_
-
-    def PaintForm(self):
-
+    def __init__(self,options_):   
+        self.options=options_     
         self.windows= Tk()
-        self.canvas = Canvas(self.windows,width = self.window_width,height = self.window_length)
-        return  self.windows
+        self.canvas = Canvas(self.windows,width = self.options.witdthform,height = self.options.heightform)
+   
 
     def GetRect(self,point_):# вынести в рисование
         r=Rect()
-        r.X0=(point_.Column+2)*self.sizeCell
-        r.Y0=(point_.Row+2)*self.sizeCell
-        r.X1=r.X0+self.sizeCell
-        r.Y1=r.Y0+self.sizeCell
+        r.X0=(point_.Column+2)*self.options.sizeCell
+        r.Y0=(point_.Row+2)*self.options.sizeCell
+        r.X1=r.X0+self.options.sizeCell
+        r.Y1=r.Y0+self.options.sizeCell
         return r
+
+    def Key(self,keyvalue,func):
+        self.windows.bind(keyvalue, func) 
+
+    def PaintForm(self):
+        self.windows.title(self.options.titleform)
+        self.canvas.pack()
+        self.windows.mainloop()
 
     def PaintRectange(self,X0,Y0,X1,Y1,Color):
         self.canvas.create_rectangle(X0,Y0,X1,Y1,fill=Color)
@@ -102,12 +105,12 @@ class Goal:
 
 class Setka:
 
-    def __init__(self,dimesionSetka_,size_,paint_,color_,sizecell_):
+    def __init__(self,paint_,options_):
         self.CellsSetka=[]
-        self.Color=color_
-        self.dimesionSetka=dimesionSetka_
-        self.size=size_
-        self.sizeCell=sizecell_
+        self.Color=options_.colorsetka
+        self.dimesionSetka=options_.dimesionSetka
+        self.size=options_.size
+        self.sizeCell=options_.sizeCell
         self.paint=paint_
         
         for i in range(self.dimesionSetka):
@@ -132,24 +135,36 @@ class Setka:
                                   self.paint.GetRect(point_).Y1,self.Color)
 
 class Zmeika:   
-      def __init__(self,paint_,dimesionSnake_=3):
+      def __init__(self,paint_,options_):
         
-        self.CellsSnake=[]
-        self.Color="White"
-        self.dimesionSnake=dimesionSnake_
+        self.CellsZmeika=[]
+        self.Color=options_.colorzmeika
+        self.dimesionSnake=options_.dimesionZmeika
         self.paint=paint_
+        self.CellsZmeika.append(Point(0,0))
+        self.CellsZmeika.append(Point(1,0))
+        self.CellsZmeika.append(Point(2,0))
 
       def SetPoinsForSnake(self):
           p=5
       def PaintSnake(self):
-           for point_ in self.CellsSnake:
+           for point_ in self.CellsZmeika:
                self.paint.PaintRectange(self.paint.GetRect(point_).X0,
                                     self.paint.GetRect(point_).Y0,
                                     self.paint.GetRect(point_).X1,
                                     self.paint.GetRect(point_).Y1,self.Color)
 
-snake=Snake(20,500,"Gray")
-snake.Go()
+options=Options()
+options.dimesionSetka=50
+options.size=300
+options.colorsetka="Gray"
+options.colorzmeika="Red"
+options.dimesionZmeika=5
+options.witdthform=600
+options.heightform=600
+options.titleform="TestSnake"
+snake=Snake(options)
+ 
  
 
 

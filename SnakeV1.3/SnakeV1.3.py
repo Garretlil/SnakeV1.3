@@ -1,6 +1,37 @@
 
 from tkinter import*
 import random
+
+class Snake:
+     def __init__(self,dimesionSetka_,size_,color_):
+        self.dimesionSetka=dimesionSetka_
+        self.size=size_
+        self.color=color_
+        self.sizeCell=self.size//self.dimesionSetka
+        self.paint_=Paint(self.sizeCell)
+         
+     def KeyS(self,event):
+        self.goal.GetRandomPoint()
+        self.goal.PaintGoal()     
+        self.setka.PaintCell(self.goal.oldpoint)
+               
+     def Go(self):
+
+        self.windows=self.paint_.PaintForm()
+        self.setka=Setka(self.dimesionSetka,self.size,self.paint_,self.color,self.sizeCell)
+        self.setka.PaintSetka()
+       
+        
+        self.zmeika=Zmeika( self.paint_)
+        self.zmeika.CellsSnake.append(Point(0,0))
+        self.zmeika.CellsSnake.append(Point(1,0))
+        self.zmeika.CellsSnake.append(Point(2,0))
+        self.goal=Goal( self.dimesionSetka,self.paint_)
+        self.zmeika.PaintSnake()
+        self.goal.PaintGoal()
+        self.windows.bind("<s>", self.KeyS) 
+        self.windows.mainloop()
+
 class Point:
      def __init__(self,Column_,Row_):
          self.Column=Column_
@@ -14,50 +45,74 @@ class Rect:
          self.Y1=0
 
 class Paint:
-    def __init__(self):        
-        pass
+    def __init__(self,sizecell_):        
+        self.sizeCell=sizecell_
 
     def PaintForm(self):
         window_width = 1000
         window_length = 800
-        ob= Tk()
-        self.canvas = Canvas(ob,width = window_width,height = window_length)
-        ob.title('Snake')
+        self.windows= Tk()
+        self.canvas = Canvas(self.windows,width = window_width,height = window_length)
+        self.windows.title('Snake')
         self.canvas.pack()
-        ob.update()
-        return  ob
-    def GetRect(self,point_,sizeCell):# вынести в рисование
+        self.windows.update()
+        return  self.windows
+
+    def Invalidate(self):
+        self.canvas.pack()
+        self.windows.update()
+
+
+    def GetRect(self,point_):# вынести в рисование
         r=Rect()
-        r.X0=(point_.Column+2)*sizeCell
-        r.Y0=(point_.Row+2)*sizeCell
-        r.X1=r.X0+sizeCell
-        r.Y1=r.Y0+sizeCell
+        r.X0=(point_.Column+2)*self.sizeCell
+        r.Y0=(point_.Row+2)*self.sizeCell
+        r.X1=r.X0+self.sizeCell
+        r.Y1=r.Y0+self.sizeCell
         return r
 
     def PaintRectange(self,X0,Y0,X1,Y1,Color):
         self.canvas.create_rectangle(X0,Y0,X1,Y1,fill=Color)
 
 class Goal:
-     def __init__(self):
-         #self.CellsGoal=[]
-         self.Color="Orange"
-         self.Column=random.randint(0,10)
-         self.Row=random.randint(0,10)
+     def __init__(self,dimesionsetka,paint_):
+         self.CellsGoal=[]
+         self.dimesionSetka=dimesionsetka-1
+         self.Col=0
+         self.Row=0
+         self.GetRandomPoint()
+         self.Color="Orange" 
+         self.paint=paint_
+
+
+     def GetRandomPoint(self):
+         self.OldCol=self.Col
+         self.OldRow=self.Row
+         self.oldpoint=Point(self.OldCol,self.OldRow)
+
+         self.Col=random.randint(0,self.dimesionSetka)
+         self.Row=random.randint(0,self.dimesionSetka)
+         self.CellsGoal.clear()
+         newpoint_=Point(self.Col,self.Row)
+         self.CellsGoal.append(newpoint_)
+         return newpoint_
          
      def PaintGoal(self):
-          paint_.PaintRectange(paint_.GetRect(goal,setka.sizeCell).X0,
-                               paint_.GetRect(goal,setka.sizeCell).Y0,
-                               paint_.GetRect(goal,setka.sizeCell).X1,
-                               paint_.GetRect(goal,setka.sizeCell).Y1,self.Color)
+          for point_ in self.CellsGoal:
+               self.paint.PaintRectange(self.paint.GetRect(point_).X0,
+                                    self.paint.GetRect(point_).Y0,
+                                    self.paint.GetRect(point_).X1,
+                                    self.paint.GetRect(point_).Y1,self.Color)
 
 class Setka:
 
-    def __init__(self,dimesionSetka_,size_):
+    def __init__(self,dimesionSetka_,size_,paint_,color_,sizecell_):
         self.CellsSetka=[]
-        self.Color="Blue"
+        self.Color=color_
         self.dimesionSetka=dimesionSetka_
         self.size=size_
-        self.sizeCell=self.size//self.dimesionSetka
+        self.sizeCell=sizecell_
+        self.paint=paint_
         
         for i in range(self.dimesionSetka):
           for k in range(self.dimesionSetka):
@@ -67,40 +122,39 @@ class Setka:
     def FindPointOfColumnRow(self,Column_,Row_):
        return self.CellsSetka[Column_,Row_]
 
+    def PaintCell(self,point_):  
+             self.paint.PaintRectange(self.paint.GetRect(point_).X0,
+                                  self.paint.GetRect(point_).Y0,
+                                  self.paint.GetRect(point_).X1,
+                                  self.paint.GetRect(point_).Y1,self.Color)
+
     def PaintSetka(self):
         for point_ in self.CellsSetka:  
-             paint_.PaintRectange(paint_.GetRect(point_,self.sizeCell).X0,
-                                  paint_.GetRect(point_,self.sizeCell).Y0,
-                                  paint_.GetRect(point_,self.sizeCell).X1,
-                                  paint_.GetRect(point_,self.sizeCell).Y1,self.Color)
+             self.paint.PaintRectange(self.paint.GetRect(point_).X0,
+                                  self.paint.GetRect(point_).Y0,
+                                  self.paint.GetRect(point_).X1,
+                                  self.paint.GetRect(point_).Y1,self.Color)
 
-
-class Snake:   
-      def __init__(self,dimesionSnake_):
+class Zmeika:   
+      def __init__(self,paint_,dimesionSnake_=3):
         
         self.CellsSnake=[]
         self.Color="White"
         self.dimesionSnake=dimesionSnake_
+        self.paint=paint_
 
       def SetPoinsForSnake(self):
           p=5
       def PaintSnake(self):
            for point_ in self.CellsSnake:
-               paint_.PaintRectange(paint_.GetRect(point_,setka.sizeCell).X0,
-                                    paint_.GetRect(point_,setka.sizeCell).Y0,
-                                    paint_.GetRect(point_,setka.sizeCell).X1,
-                                    paint_.GetRect(point_,setka.sizeCell).Y1,self.Color)
+               self.paint.PaintRectange(self.paint.GetRect(point_).X0,
+                                    self.paint.GetRect(point_).Y0,
+                                    self.paint.GetRect(point_).X1,
+                                    self.paint.GetRect(point_).Y1,self.Color)
 
-paint_=Paint()
-ob=paint_.PaintForm()
-setka=Setka(10,500)
-setka.PaintSetka()
-SNAKE=Snake(5)
-SNAKE.CellsSnake.append(Point(0,0))
-SNAKE.CellsSnake.append(Point(1,0))
-SNAKE.CellsSnake.append(Point(2,0))
-goal=Goal()
-SNAKE.PaintSnake()
-goal.PaintGoal()
-ob.mainloop()
+snake=Snake(20,500,"Gray")
+snake.Go()
+ 
+
+
 

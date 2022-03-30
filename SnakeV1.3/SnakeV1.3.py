@@ -74,6 +74,7 @@ class Setka:
                                   paint_.GetRect(point_,self.sizeCell).X1,
                                   paint_.GetRect(point_,self.sizeCell).Y1,self.Color)
 
+
 class Snake:   
       def __init__(self,dimesionSnake_):
         

@@ -8,7 +8,7 @@ class Snake:
         self.size=size_
         self.color=color_
         self.sizeCell=self.size//self.dimesionSetka
-        self.paint_=Paint(self.sizeCell)
+        self.paint_=Paint(self.sizeCell,800,1000)
          
      def KeyS(self,event):
         self.goal.GetRandomPoint()
@@ -30,6 +30,9 @@ class Snake:
         self.zmeika.PaintSnake()
         self.goal.PaintGoal()
         self.windows.bind("<s>", self.KeyS) 
+        self.windows.title('Snake')
+        self.paint_.canvas.pack()
+        self.windows.update()
         self.windows.mainloop()
 
 class Point:
@@ -45,23 +48,16 @@ class Rect:
          self.Y1=0
 
 class Paint:
-    def __init__(self,sizecell_):        
+    def __init__(self,sizecell_,window_width_,window_length_):        
         self.sizeCell=sizecell_
+        self.window_width = window_width_
+        self.window_length = window_length_
 
     def PaintForm(self):
-        window_width = 1000
-        window_length = 800
+
         self.windows= Tk()
-        self.canvas = Canvas(self.windows,width = window_width,height = window_length)
-        self.windows.title('Snake')
-        self.canvas.pack()
-        self.windows.update()
+        self.canvas = Canvas(self.windows,width = self.window_width,height = self.window_length)
         return  self.windows
-
-    def Invalidate(self):
-        self.canvas.pack()
-        self.windows.update()
-
 
     def GetRect(self,point_):# вынести в рисование
         r=Rect()

@@ -34,8 +34,8 @@ class Snake:
         self.zmeika.PaintSnake()
         self.goal=Goal( self.options.dimesionSetka,self.paint_)
         self.goal.PaintGoal()
-        self.paint_.Key("<s>",self.KeyS) 
-        self.paint_.Key("<Right>",self.KeyRight) 
+        self.paint_.BindKey("<s>",self.KeyS) 
+        self.paint_.BindKey("<Right>",self.KeyRight) 
         self.paint_.PaintForm()
          
      def KeyS(self,event):
@@ -64,8 +64,8 @@ class Rect:
 class Paint:
     def __init__(self,options_):   
         self.options=options_     
-        self.windows= Tk()
-        self.canvas = Canvas(self.windows,width = self.options.witdthform,height = self.options.heightform)
+        self.mainwindow= Tk()
+        self.canvas = Canvas(self.mainwindow,width = self.options.witdthform,height = self.options.heightform)
    
 
     def GetRect(self,point_):# вынести в рисование
@@ -76,13 +76,13 @@ class Paint:
         r.Y1=r.Y0+self.options.sizeCell
         return r
 
-    def Key(self,keyvalue,func):
-        self.windows.bind(keyvalue, func) 
+    def BindKey(self,keyvalue,func):
+        self.mainwindow.bind(keyvalue, func) 
 
     def PaintForm(self):
-        self.windows.title(self.options.titleform)
+        self.mainwindow.title(self.options.titleform)
         self.canvas.pack()
-        self.windows.mainloop()
+        self.mainwindow.mainloop()
 
     def PaintRectange(self,X0,Y0,X1,Y1,Color):
         self.canvas.create_rectangle(X0,Y0,X1,Y1,fill=Color)

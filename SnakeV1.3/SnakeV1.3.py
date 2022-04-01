@@ -2,12 +2,13 @@
 from tkinter import*
 import random
 from enum import Enum
+import time
 
 class Directions(Enum):
-    Up = 1
-    Down = 2
-    Left = 3
-    Right = 4
+    Up = "<Up>"
+    Down = "<Down>"
+    Left = "<Left>"
+    Right = "<Right>"
 
 class Options:
      def __init__(self):
@@ -31,21 +32,24 @@ class Snake:
         self.setka=Setka(self.paint_,self.options)
         self.setka.PaintSetka()             
         self.zmeika=Zmeika( self.paint_,self.options)
-        self.zmeika.PaintSnake()
+        self.zmeika.PaintZmeika()
         self.goal=Goal( self.options.dimesionSetka,self.paint_)
         self.goal.PaintGoal()
-        self.paint_.BindKey("<s>",self.KeyS) 
-        self.paint_.BindKey("<Right>",self.KeyRight) 
+        self.paint_.BindKey("<Right>",self.Keys) 
+        self.paint_.BindKey("<Up>",self.Keys) 
+        self.paint_.BindKey("<Down>",self.Keys) 
+        self.paint_.BindKey("<Left>",self.Keys) 
         self.paint_.PaintForm()
          
-     def KeyS(self,event):
-        self.goal.GetRandomPoint()
-        self.goal.PaintGoal()     
-        self.setka.PaintCell(self.goal.oldpoint)   
-
-     def KeyRight(self,event):
-        self.zmeika.MoveNext(self.options.currentdirection)
-        self.zmeika.PaintSnake()
+     def Keys(self,event):
+        #проверка на разворот
+        pointsold_=self.zmeika.MoveNext(event.keysym) 
+        self.setka.PaintCells(pointsold_)
+        self.zmeika.PaintZmeika()
+         
+        #self.goal.GetRandomPoint()
+        #self.goal.PaintGoal()     
+        #self.setka.PaintCell(self.goal.oldpoint)   
    
  
 
@@ -141,6 +145,10 @@ class Setka:
                                   self.paint.GetRect(point_).X1,
                                   self.paint.GetRect(point_).Y1,self.Color)
 
+    def PaintCells(self,points_):
+        for point_ in points_:  
+             self.PaintCell(point_)
+
     def PaintSetka(self):
         for point_ in self.CellsSetka:  
              self.paint.PaintRectange(self.paint.GetRect(point_).X0,
@@ -149,22 +157,55 @@ class Setka:
                                   self.paint.GetRect(point_).Y1,self.Color)
 
 class Zmeika:   
+      def coping(self):
+          self.CellsZmeikaOld=[]
+          for i in self.CellsZmeika:
+              self.CellsZmeikaOld.append(i)
+          return self.CellsZmeikaOld
+
       def __init__(self,paint_,options_):
         
         self.CellsZmeika=[]
+        self.CellsZmeikaOld=[]
         self.Color=options_.colorzmeika
         self.dimesionSnake=options_.dimesionZmeika
         self.paint=paint_
+        # начальное положение
         self.CellsZmeika.append(Point(0,0))
         self.CellsZmeika.append(Point(1,0))
         self.CellsZmeika.append(Point(2,0))
 
-      def MoveNext(self,direction):
-        self.CellsZmeika.append(Point(1,0))
-        self.CellsZmeika.append(Point(2,0))
-        self.CellsZmeika.append(Point(3,0))
+      def MoveNext(self,direction_):
+          self.direction=direction_
+          self.CellsZmeikaOld=[]
+        
+          for i in self.CellsZmeika:
+              self.CellsZmeikaOld.append(i)
+          self.CellsZmeika=[]
 
-      def PaintSnake(self):
+          count_=self.dimesionSnake-1
+          self.CellsZmeika.append(self.CellsZmeikaOld[count_])
+          
+          for i in range(count_,0,-1):
+            if self.direction=='Down':              
+                  point_=(Point(self.CellsZmeika[len(self.CellsZmeika)-1].Column,
+                                                self.CellsZmeika[len(self.CellsZmeika)-1].Row+1))
+            if self.direction=='Left':
+                  point_=(Point(self.CellsZmeika[len(self.CellsZmeika)-1].Column-1,
+                                                self.CellsZmeika[len(self.CellsZmeika)-1].Row))
+            if self.direction=='Right':
+                  point_=(Point(self.CellsZmeika[len(self.CellsZmeika)-1].Column+1,
+                                                self.CellsZmeika[len(self.CellsZmeika)-1].Row))
+            if self.direction=='Up':
+                  point_=(Point(self.CellsZmeika[len(self.CellsZmeika)-1].Column,
+                                                self.CellsZmeika[len(self.CellsZmeika)-1].Row-1))
+            self.CellsZmeika.append(point_)
+          
+          return self.CellsZmeikaOld
+
+           
+
+      def PaintZmeika(self):
            for point_ in self.CellsZmeika:
                self.paint.PaintRectange(self.paint.GetRect(point_).X0,
                                     self.paint.GetRect(point_).Y0,
@@ -176,7 +217,7 @@ options.dimesionSetka=20
 options.size=450
 options.colorsetka="Gray"
 options.colorzmeika="Red"
-options.dimesionZmeika=5
+options.dimesionZmeika=3
 options.witdthform=600
 options.heightform=600
 options.titleform="TestSnake"

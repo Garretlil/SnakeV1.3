@@ -34,17 +34,20 @@ class Snake:
         self.zmeika.PaintZmeika()
         self.goal=Goal( self.options.dimesionSetka,self.paint_)
         self.goal.PaintGoal()
-        self.paint_.BindKey("<Right>",self.Keys) 
-        self.paint_.BindKey("<Up>",self.Keys) 
-        self.paint_.BindKey("<Down>",self.Keys) 
-        self.paint_.BindKey("<Left>",self.Keys) 
+        self.paint_.BindKey("<"+Directions.Right.name+">",self.Keys) 
+        self.paint_.BindKey("<"+Directions.Left.name+">",self.Keys) 
+        self.paint_.BindKey("<"+Directions.Down.name+">",self.Keys) 
+        self.paint_.BindKey("<"+Directions.Up.name+">",self.Keys) 
         self.paint_.PaintForm()
          
      def Keys(self,event):
+        for each in Directions:
+            if event.keysym==each.name:
+               pointsold_=self.zmeika.MoveNext(each.name)
+                
         #проверка на разворот
         #direct=event.keysym
         #if Directions.direct.value%2!=Directions.self.options.currentdirection.value%2:
-        pointsold_=self.zmeika.MoveNext(event.keysym) 
         self.setka.PaintCells(pointsold_)
         self.zmeika.PaintZmeika()
          
@@ -225,3 +228,4 @@ options.heightform=600
 options.titleform="TestSnake"
 options.currentdirection=Directions.Right
 snake=Snake(options)
+ 

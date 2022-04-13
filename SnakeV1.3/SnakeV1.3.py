@@ -1,14 +1,13 @@
-
 from tkinter import*
 import random
 from enum import Enum
 import time
 
 class Directions(Enum):
-    Up = "<Up>"
-    Down = "<Down>"
-    Left = "<Left>"
-    Right = "<Right>"
+    Up = 1
+    Down = 3
+    Left = 4
+    Right = 6
 
 class Options:
      def __init__(self):
@@ -43,6 +42,8 @@ class Snake:
          
      def Keys(self,event):
         #проверка на разворот
+        #direct=event.keysym
+        #if Directions.direct.value%2!=Directions.self.options.currentdirection.value%2:
         pointsold_=self.zmeika.MoveNext(event.keysym) 
         self.setka.PaintCells(pointsold_)
         self.zmeika.PaintZmeika()
@@ -66,7 +67,7 @@ class Rect:
          self.Y1=0
 
 class Paint:
-    def __init__(self,options_):   
+    def __init__(self,options_): 
         self.options=options_     
         self.mainwindow= Tk()
         self.canvas = Canvas(self.mainwindow,width = self.options.witdthform,height = self.options.heightform)
@@ -178,6 +179,7 @@ class Zmeika:
       def MoveNext(self,direction_):
           self.direction=direction_
           self.CellsZmeikaOld=[]
+          options.currentdirection=direction_
         
           for i in self.CellsZmeika:
               self.CellsZmeikaOld.append(i)
@@ -187,16 +189,16 @@ class Zmeika:
           self.CellsZmeika.append(self.CellsZmeikaOld[count_])
           
           for i in range(count_,0,-1):
-            if self.direction=='Down':              
+            if self.direction==Directions.Down.name:              
                   point_=(Point(self.CellsZmeika[len(self.CellsZmeika)-1].Column,
                                                 self.CellsZmeika[len(self.CellsZmeika)-1].Row+1))
-            if self.direction=='Left':
+            if self.direction==Directions.Left.name:
                   point_=(Point(self.CellsZmeika[len(self.CellsZmeika)-1].Column-1,
                                                 self.CellsZmeika[len(self.CellsZmeika)-1].Row))
-            if self.direction=='Right':
+            if self.direction==Directions.Right.name:
                   point_=(Point(self.CellsZmeika[len(self.CellsZmeika)-1].Column+1,
                                                 self.CellsZmeika[len(self.CellsZmeika)-1].Row))
-            if self.direction=='Up':
+            if self.direction==Directions.Up.name:
                   point_=(Point(self.CellsZmeika[len(self.CellsZmeika)-1].Column,
                                                 self.CellsZmeika[len(self.CellsZmeika)-1].Row-1))
             self.CellsZmeika.append(point_)
@@ -223,8 +225,3 @@ options.heightform=600
 options.titleform="TestSnake"
 options.currentdirection=Directions.Right
 snake=Snake(options)
- 
- 
-
-
-

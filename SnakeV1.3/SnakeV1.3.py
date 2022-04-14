@@ -43,11 +43,12 @@ class Snake:
      def Keys(self,event):
         for each in Directions:
             if event.keysym==each.name:
-               pointsold_=self.zmeika.MoveNext(each.name)
+                if each.value%2!=options.currentdirection.value%2:
+                    pointsold_=self.zmeika.MoveNext(each)
                 
         #проверка на разворот
         #direct=event.keysym
-        #if Directions.direct.value%2!=Directions.self.options.currentdirection.value%2:
+        
         self.setka.PaintCells(pointsold_)
         self.zmeika.PaintZmeika()
          
@@ -192,16 +193,16 @@ class Zmeika:
           self.CellsZmeika.append(self.CellsZmeikaOld[count_])
           
           for i in range(count_,0,-1):
-            if self.direction==Directions.Down.name:              
+            if self.direction==Directions.Down:              
                   point_=(Point(self.CellsZmeika[len(self.CellsZmeika)-1].Column,
                                                 self.CellsZmeika[len(self.CellsZmeika)-1].Row+1))
-            if self.direction==Directions.Left.name:
+            if self.direction==Directions.Left:
                   point_=(Point(self.CellsZmeika[len(self.CellsZmeika)-1].Column-1,
                                                 self.CellsZmeika[len(self.CellsZmeika)-1].Row))
-            if self.direction==Directions.Right.name:
+            if self.direction==Directions.Right:
                   point_=(Point(self.CellsZmeika[len(self.CellsZmeika)-1].Column+1,
                                                 self.CellsZmeika[len(self.CellsZmeika)-1].Row))
-            if self.direction==Directions.Up.name:
+            if self.direction==Directions.Up:
                   point_=(Point(self.CellsZmeika[len(self.CellsZmeika)-1].Column,
                                                 self.CellsZmeika[len(self.CellsZmeika)-1].Row-1))
             self.CellsZmeika.append(point_)

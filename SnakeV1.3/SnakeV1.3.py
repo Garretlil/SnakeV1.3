@@ -43,14 +43,16 @@ class Snake:
      def Keys(self,event):
         for each in Directions:
             if event.keysym==each.name:
+                #проверка на разворот
                 if each.value%2!=options.currentdirection.value%2:
                     pointsold_=self.zmeika.MoveNext(each)
-                
+                    self.setka.PaintCells(pointsold_)
+                    self.zmeika.PaintZmeika()
         #проверка на разворот
         #direct=event.keysym
         
-        self.setka.PaintCells(pointsold_)
-        self.zmeika.PaintZmeika()
+        #self.setka.PaintCells(pointsold_)
+        #self.zmeika.PaintZmeika()
          
         #self.goal.GetRandomPoint()
         #self.goal.PaintGoal()     

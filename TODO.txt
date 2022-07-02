@@ -1,3 +1,3 @@
-1. MoveNext MoveCircle
+1. MoveCircle->MoveNext 
 2. объект Options в текстовый файл/XML/JSON. Считывание свойств через отражение
 3. сериализация объекта Options  / https://docs.python.org/3/library/pickle.html

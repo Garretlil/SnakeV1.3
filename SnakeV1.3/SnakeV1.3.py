@@ -2,6 +2,7 @@ from tkinter import*
 import random
 from enum import Enum
 import time
+from functools import lru_cache
 
 class Directions(Enum):
     Up = 1
@@ -50,11 +51,14 @@ class Snake:
         if direction.value%2!=options.currentdirection.value%2:                                            ##РАЗКОММЕНТИРОВАТЬ!!!
            self.MoveCicle(direction)
      def MoveCicle(self,direction):
-             pointsold_=self.zmeika.MoveNext(direction)#return self.CellsZmeikaOld
-             self.setka.PaintCells(pointsold_)
+             CellsZmeikaOld=self.zmeika.MoveNext(direction)#return self.CellsZmeikaOld
+             self.setka.PaintCells(CellsZmeikaOld)
              self.zmeika.PaintZmeika()
+             if CellsZmeikaOld[2].Column==self.goal.Col and  CellsZmeikaOld[2].Row==self.goal.Row:                                            #проверка на поедание яблока
+                self.goal.GetRandomPoint()
+                self.goal.PaintGoal()
              self.paint_.canvasupdate()
-             time.sleep(0.1)
+             time.sleep(0.05)
              #доделать
              self.MoveCicle(direction)       #self.paint_.mainwindow.after(500,
 #self.goal.GetRandomPoint()
@@ -195,42 +199,59 @@ class Zmeika:
           self.count=len(self.CellsZmeikaOld)#  длина змейки
           self.previousCell=self.CellsZmeikaOld[self.count-1]# голова змейки
           
-          if self.direction==Directions.Down:  
-              self.CellsZmeika.append(Point(self.previousCell.Column,
+
+
+          if self.direction==Directions.Down: 
+              if self.previousCell.Row==options.dimesionSetka -1:
+                 self.CellsZmeika.append(Point(self.previousCell.Column,
+                                               0))   
+              else:
+                   self.CellsZmeika.append(Point(self.previousCell.Column,
                                                self.previousCell.Row+1))# смещаем голову змейки 
               for i in range(self.count-2,-1,-1):
                   point_=(Point(self.previousCell.Column,
                                 self.previousCell.Row))
                   self.CellsZmeika.append(point_)
                   self.previousCell=self.CellsZmeikaOld[i]
+
           if self.direction==Directions.Left:              
-              self.CellsZmeika.append(Point(self.previousCell.Column-1,
-                                            self.previousCell.Row))# смещаем голову змейки    
+              if self.previousCell.Column==0:
+                 self.CellsZmeika.append(Point(options.dimesionSetka-1,
+                                               self.previousCell.Row)) 
+              else:
+                  self.CellsZmeika.append(Point(self.previousCell.Column-1,
+                                            self.previousCell.Row))
               for i in range(self.count-2,-1,-1):
                   point_=(Point(self.previousCell.Column,
                                 self.previousCell.Row))
                   self.CellsZmeika.append(point_)
                   self.previousCell=self.CellsZmeikaOld[i]
-          if self.direction==Directions.Right:              
-              self.CellsZmeika.append(Point(self.previousCell.Column+1,
-                                            self.previousCell.Row))# смещаем голову змейки    
+          if self.direction==Directions.Right:    
+              if self.previousCell.Column==options.dimesionSetka-1:
+                 self.CellsZmeika.append(Point(0,
+                                               self.previousCell.Row))# смещаем голову змейки 
+              else:
+                  self.CellsZmeika.append(Point(self.previousCell.Column+1,
+                                            self.previousCell.Row))
               for i in range(self.count-2,-1,-1):
                   point_=(Point(self.previousCell.Column,
                                 self.previousCell.Row))
                   self.CellsZmeika.append(point_)
                   self.previousCell=self.CellsZmeikaOld[i]
-          if self.direction==Directions.Up:              
-              self.CellsZmeika.append(Point(self.previousCell.Column,
-                                            self.previousCell.Row-1))# смещаем голову змейки    
+
+          if self.direction==Directions.Up:
+              if self.previousCell.Row==0:
+                 self.CellsZmeika.append(Point(self.previousCell.Column,
+                                            options.dimesionSetka -1))# смещаем голову змейки    
+              else:
+                  self.CellsZmeika.append(Point(self.previousCell.Column,
+                                            self.previousCell.Row-1))
               for i in range(self.count-2,-1,-1):
                   point_=(Point(self.previousCell.Column,
                                 self.previousCell.Row))
                   self.CellsZmeika.append(point_)
                   self.previousCell=self.CellsZmeikaOld[i]
-          #if snake.goal.Col==self.CellsZmeika[0].Column and snake.goal.Row==self.CellsZmeika[0].Row:
-          #    snake.goal.GetRandomPoint()
-          #    snake.goal.PaintGoal()
-         
+          
           self.CellsZmeika.reverse()
           return self.CellsZmeikaOld
            

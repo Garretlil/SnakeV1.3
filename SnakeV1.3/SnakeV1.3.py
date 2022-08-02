@@ -2,7 +2,6 @@ from tkinter import*
 import random
 from enum import Enum
 import time
-from functools import lru_cache
 
 class Directions(Enum):
     Up = 1
@@ -51,19 +50,20 @@ class Snake:
         if direction.value%2!=options.currentdirection.value%2:                                            ##РАЗКОММЕНТИРОВАТЬ!!!
            self.MoveCicle(direction)
      def MoveCicle(self,direction):
-             CellsZmeikaOld=self.zmeika.MoveNext(direction)#return self.CellsZmeikaOld
-             self.setka.PaintCells(CellsZmeikaOld)
-             self.zmeika.PaintZmeika()
-             if CellsZmeikaOld[2].Column==self.goal.Col and  CellsZmeikaOld[2].Row==self.goal.Row:                                            #проверка на поедание яблока
-                self.goal.GetRandomPoint()
-                self.goal.PaintGoal()
-             self.paint_.canvasupdate()
-             time.sleep(0.05)
-             #доделать
-             self.MoveCicle(direction)       #self.paint_.mainwindow.after(500,
-#self.goal.GetRandomPoint()
-#self.goal.PaintGoal()     
-#self.setka.PaintCell(self.goal.oldpoint)   
+             while True:
+                 CellsZmeikaOld=self.zmeika.MoveNext(direction)#return self.CellsZmeikaOld
+                 self.setka.PaintCells(CellsZmeikaOld)
+                 self.zmeika.PaintZmeika()
+                 if self.zmeika.CellsZmeika[-1].Column==self.goal.Col and  self.zmeika.CellsZmeika[-1].Row==self.goal.Row:                                          #проверка на поедание яблока
+  
+                     newcoords=[self.zmeika.CellsZmeika[1].Column-self.zmeika.CellsZmeika[0].Column,self.zmeika.CellsZmeika[1].Row-self.zmeika.CellsZmeika[0].Row]
+                     self.zmeika.CellsZmeika.insert(0,Point(self.zmeika.CellsZmeika[0].Column-newcoords[0],self.zmeika.CellsZmeika[0].Row-newcoords[1]))
+                     self.setka.PaintCells(self.zmeika.CellsZmeika)
+                     self.goal.GetRandomPoint()
+                     self.goal.PaintGoal()
+                 self.paint_.canvasupdate()
+                 time.sleep(0.05)
+                
 class Point:
      def __init__(self,Column_,Row_):
          self.Column=Column_
@@ -147,10 +147,6 @@ class Setka:
         for i in range(self.dimesionSetka):
           for k in range(self.dimesionSetka):
              self.CellsSetka.append(Point(i,k))
-     
-
-    def FindPointOfColumnRow(self,Column_,Row_):
-       return self.CellsSetka[Column_,Row_]
 
     def PaintCell(self,point_):  
              self.paint.PaintRectange(self.paint.GetRect(point_).X0,
